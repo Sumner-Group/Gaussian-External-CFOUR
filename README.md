@@ -13,3 +13,5 @@ Problems to be addressed:
 1) Currently hardwired for CCSD(T)/cc-PVTZ calculations
 2) Restart capability is clunky
 3) Calculations for 1st/2nd derivatives of normal mode displacements is not parallelized
+4) Does not correctly get dipole moment, dipole derivatives and polarizability. Sets them all to zero.
+
