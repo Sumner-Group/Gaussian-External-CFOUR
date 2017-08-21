@@ -6,6 +6,7 @@ sextic distortion constants, whereas the publically available version of CFOUR c
 has been tested with Gaussian17 A.03 and CFOUR-v2.0beta.
 
 To invoke in Gaussian, use the following set of keywords: 
+
 external="./g16-cfour.script" freq=anharmonic nosymm test
 
 Problems to be addressed:
