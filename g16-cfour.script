@@ -1,0 +1,54 @@
+#!/bin/csh -f
+# Script to use External keyword in Gaussian16 in combinatiopn with Cfour-v2
+# I. Sumner 8/16/2017
+#
+#Generate Input
+# Get number of atoms
+set natom=`head -1 $2 | awk '{print $1}'`
+#
+# This is in case you need to restart a calculation. You need a file named "counter" it should contain
+#   the number "0." This is how the script keeps track of how calculations have been done.
+#counter
+set ct = `cat counter | awk '{print $1*1}'`
+set num=`echo $ct | awk '{print "00"$1+1}'`
+echo $num > counter
+if (-d $num) then
+  cd $num
+else  
+  mkdir $num
+  cd $num
+  #make ZMAT. Currently hardwired to CCSD(T)/cc-PVTZ
+  echo "TITLE" > ZMAT
+  cat $2 | awk '{if(NR>1&&NR<='$natom'+1) print $1,$2,$3,$4}' | sed s'/^6 /C /'g | sed s'/^1 /H /'g | sed s'/^9 /F /'g | sed s'/^8 /O /'g | sed s'/^7 /N /'g >> ZMAT
+  cat << EOF >> ZMAT
+
+*CFOUR(CALC=CCSD(T),BASIS=cc-pVTZ                  
+ABCDTYPE=AOBASIS                
+CC_PROG=ECC                         
+LINEQ_CONV=7                     
+SCF_CONV=9                       
+CC_CONV=9               
+VIB=ANALYTIC        
+ANHARM=VPT2          
+MEMORY=1600000000
+ANH_ALGORITH=PARALLEL     
+COORD=CARTESIAN,UNITS=BOHR,ANHARM=0)   
+
+
+EOF
+  #run cfour. Assumes you have baiss set information, GENBAS, in current directory
+  cp ../GENBAS .
+  xcfour > xcfour.out
+endif
+#Generate Output in form that G16 can read.
+#Get Force Constants
+cat FCMFINAL | grep '[0-9]\.[0-9]' | xargs | awk '{for(i=1;i<=3*'$natom';i++){for(j=1;j<=3*'$natom';j++){r+=1;A[i,j]=$r}}}END{for(i=1;i<=3*'$natom';i++){for(j=1;j<=i;j++){print A[i,j]}}}' | awk '{printf "%20.12e",$i;if(NR%3==0) {print""}}' | sed s'/e/D/'g > FCMG16
+#Get Energy, set dipole to zero
+grep 'CCSD(T) energy  ' xcfour.out | awk '{printf "%20.12e%20.12e%20.12e%20.12e\n", $3,0.0,0.0,0.0}' | sed s'/e/D/'g  > EDipG16
+#This line will work for HF calculations
+#grep 'E(SCF)  ' xcfour.out | awk '{printf "%20.12e%20.12e%20.12e%20.12e\n", $3,0.0,0.0,0.0}' | sed s'/e/D/'g  > EDipG16
+#Set polarizability and dipole derivatives to zero
+echo  | awk '{for(i=1;i<=2+3*'$natom';i++){printf "%20.12e%20.12e%20.12e\n",0.0,0.0,0.0}}' | sed s'/e/D/'g  > PolDipDerG16
+# Get gradient
+ cat xcfour.out | sed -n '/Molecular grad/','/hessian/'p | grep -i '[0-9]\.[0-9]' | grep -iv molec |  awk '{if(NF==5)printf "%20.12e%20.12e%20.12e\n", $3,$4,$5}' | sed s'/e/D/'g > GradG16
+cat EDipG16 GradG16 PolDipDerG16 FCMG16 > $3
