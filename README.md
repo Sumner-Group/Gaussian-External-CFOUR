@@ -19,4 +19,4 @@ Problems to be addressed:
 ---
 Bunn, H.; Soliday, R. M.; Sumner, I.; Raston, P. L. “Far-infrared spectroscopic characterization of anti-vinyl alcohol” The Astrophysical Journal, 2017, 847, 67-72. [doi:10.3847/1538-4357/aa8870](https://doi.org/10.3847/1538-4357/aa8870)
 
-[![DOI](https://zenodo.org/badge/100960252.svg)](https://zenodo.org/badge/10.5281/zenodo.846364/100960252)
+[![DOI](https://zenodo.org/badge/100960252.svg)](https://zenodo.org/badge/latestdoi/100960252)
