@@ -15,3 +15,8 @@ Problems to be addressed:
 3) Calculations for 1st/2nd derivatives of normal mode displacements is not parallelized
 4) Does not correctly get dipole moment, dipole derivatives and polarizability. Sets them all to zero.
 
+**Do you want to cite this work?**
+---
+Bunn, H.; Soliday, R. M.; Sumner, I.; Raston, P. L. “Far-infrared spectroscopic characterization of anti-vinyl alcohol” The Astrophysical Journal, 2017, 847, 67-72. [doi:10.3847/1538-4357/aa8870](https://doi.org/10.3847/1538-4357/aa8870)
+
+[![DOI](https://zenodo.org/badge/100960252.svg)](https://zenodo.org/badge/10.5281/zenodo.846364/100960252)
